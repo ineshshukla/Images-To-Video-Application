@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Editor</title>
+    <link rel="stylesheet" href="/templates/editor/styles.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            100: '#c7b2ca',
+                            500: '#bf75cc',
+                            700: '#b62fce',
+                        }
+                    },
+                    minWidth: {
+                        'x': '20rem'
+                    }
+                },
+            }
+        }
+    </script>
+</head>
+<body class="dark:bg-[#0F172A] text-white">
+    <div id="video-editor" class="flex flex-row h-screen">
+        <div id="transitions-pics" class="flex flex-col min-w-x w-1/4 p-2 bg-gray-600 mr-2 rounded relative">
+            <h3>Transitions</h3>
+            <div id="transitions" class="grid grid-cols-2">
+                <button class="transition bg-purple-700 p-2 mr-2 hover:bg-purple-500 rounded" onclick="applyTransition('Fade In')">Fade In</button>
+                <button class="transition bg-purple-700 p-2 mr-2 hover:bg-purple-500 rounded" onclick="applyTransition('Fade Out')">Fade Out</button>
+            </div>
+            <hr class="wborder-t-2 border-gray-500 my-2"> <!-- 70% width, translucent divider -->
+            <h3>Images</h3>
+            <div id="available-pics" class="grid grid-cols-2 gap-4 overflow-scroll">
+                {{ images|replace('"', '&quot;')|safe }}
+            </div>
+            <hr class="wborder-t-2 border-gray-500 mb-2 mt-auto"> <!-- 70% width, translucent divider -->
+            <h3>Background audio</h3>
+            <select id="audio-select" class="bg-gray-800 text-white p-2 rounded">
+                <option value="0">Select Audio</option>
+            </select>
+        </div>
+        <div id="video-area" class="flex flex-col justify-between p-4 w-3/4 h-screen">
+            <div id="video-preview" class="w-full h-3/4">
+                <video id="video" class="w-full">
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div id="video-controls" class="flex justify-between items-center bg-gray-800 p-2">
+                    <div class="flex">
+                        <button id="play-pause" class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                        <button id="rewind" class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded ml-2">
+                            <i class="fa-solid fa-backward"></i>
+                        </button>
+                    </div>
+                    <input id="seek-bar" type="range" class="w-1/2 bg-purple-500 h-1 rounded-full">
+                    <span id="current-time" class="text-white">00:00</span>
+                </div>
+            </div>
+            <div id="editing-area" class="bg-gray-700 bottom-0 left-0 w-full justify-between items-center">
+                <div class="res-options">
+                    <div class="flex p-2 bg-gray-600 rounded">
+                        <input type="number" id="width" class="bg-gray-800 w-1/3 mr-2 p-2 rounded" placeholder="Width">
+                        <input type="number" id="height" class="bg-gray-800 w-1/3 mr-2 p-2 rounded" placeholder="Height">
+                        <input type="text" id="quality" class="bg-gray-800 w-1/3 mr-2 p-2 rounded" placeholder="Bitrate">
+                    </div>
+                </div>
+                <button id="create-video" class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-2 px-4 my-2 w-full" onclick="downloadVid()">
+                    Download Video
+                </button>
+                <div id="timeline" class="bg-gray-600 p-2 flex rounded" dropzone="move"><div id="temp">Drag image and drop here</div></div>
+            </div>
+        </div>
+    </div>
+    <script src="/templates/editor/script.js"></script>
+</body>
+</html>

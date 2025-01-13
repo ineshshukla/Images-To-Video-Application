@@ -1,0 +1,45 @@
+#available-pics {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+#available-pics::-webkit-scrollbar {
+    display: none;
+}
+#timeline {
+    height: 120px;
+    align-items: center;
+    justify-content: start;
+    overflow:scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    flex-shrink: 0;
+}
+#timeline::-webkit-scrollbar {
+    display: none;
+}
+video {
+    max-height: 90%;
+}
+.pic-element input {
+    font-size: 9px;
+    width: 30px;
+    height: 20px;
+}
+.pic-element div {
+    height: 20px;
+    width: 20px;
+    font-size: 10px;
+    cursor: pointer;
+}
+.pic-element img {
+    width: 100%;
+    min-width: 100px;
+    height: 100px;
+}
+.pic-element {
+    margin-right: 5px;
+}
+
+img {
+    object-fit: cover;
+}

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Photo -> Video</title>
+    <style>
+        html{
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
+        }
+        @font-face {
+            font-family: Pro;
+            src: url({{ url_for('static', filename='fonts/Roboto-Medium.ttf') }});
+        }
+        body {
+            background: linear-gradient(to bottom right, #a30bb8 0%, #080426 100%);
+            height: 100%;
+            min-height: 100vh;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .heading {
+            text-align: center;
+            margin-top: 5%;
+            margin-bottom: 4%;
+            margin-left: 20%;
+            margin-right: 20%;
+            color: rgb(255, 255, 255);
+            font-family: Pro;
+            font-size: 600%;
+        }
+        .mt-2 {
+            margin-top: 10%;
+            margin-left: 30%;
+            margin-right: 30%;
+        }
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .photo-gallery img {
+            width: 150px;
+            height: 150px;
+            margin: 10px;
+            object-fit: cover; 
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+        .img-container {
+            position: relative;
+        }
+        .img-container input {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+                    /* Style for checked photos */
+            .img-container input:checked + label img {
+                border: 2px solid #b62fce; /* Add border to the checked photo */
+            }
+
+            /* Style for unchecked photos */
+            .img-container input:not(:checked) + label img {
+                border: none; /* Remove border from unchecked photos */
+            }
+
+        .select{
+            text-align: center;
+            margin-top: 2%;
+            /* margin-bottom: 4%; */
+            margin-left: 20%;
+            margin-right: 20%;
+            color: rgb(255, 255, 255);
+            font-family: Pro;
+            font-size: 200%;
+        }
+        .create{
+            text-align: right;
+            /* margin-top: 2%;  */
+            margin-bottom: 0%;
+            margin-left: 20%;
+            margin-right: 2%;
+            /* color: rgb(255, 255, 255); */
+            font-family: Pro;
+            font-size: 100%;
+        }
+        .create button{
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #a52bba;
+            color: white;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+        }
+        .create button:hover{
+            background-color: #8d089f;
+            transition: 0.2s;
+        }
+        .create button:active{
+            background-color: #7c088b;
+            transition: 0.12s;
+        }
+        .bhavya {
+            z-index: 100;
+        }
+        .user-details {
+            position: absolute;
+            top: 20px;
+            right: 50px;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius:7px;
+            font-family: Pro;
+            /* padding:5px 10px; */
+            font-size: 16px;
+            z-index: 1000;
+        }
+        .user-details p {
+            margin: 10px 18px 10px 18px;
+            display:flex;
+            justify-content: center;
+            text-align: center;
+        }
+        .logout {
+            width:100%;
+            height: 0;
+            z-index: 2000;
+            color: white;
+            background-color:rgb(219, 54, 54);
+            /* margin:4px 4px 4px 4px;  */
+            font-family: Pro;
+            font-size: 16px;
+            border-radius: 0 0 7px 7px;
+            /* transition: 0.2s; */
+            transition: 0.5s;
+            overflow: hidden;
+            text-align: center;
+        }
+        .nav:hover .logout {
+            /* margin-bottom: 4px; */
+            height: 100%;
+            padding: 3px 45px;
+        }
+    </style>
+</head>
+<body class = "body bg-black">
+    <div class="nav">
+        <!-- function to get user details -->
+        <!-- Replace "User Name" and "user@example.com" with actual user data -->
+        <div class="user-details">
+            <p>{{ username }}</p>
+            <p>{{ email }}</p>
+            <div class="logout">
+                <form action="/app/logout"><button type="submit">Log out</button></form>
+            </div>
+        </div>
+    </div>
+    <div id="myDIV" class = "bg-black before:animate-pulse before:bg-gradient-to-b before:from-gray-900 overflow-hidden before:via-[#00FF00] before:to-gray-900 before:absolute ">
+        <div class="absolute bhavya w-full">
+            <div class = "w-full lg:2/3 px-6 bg-gray-500 bg-opacity-20 bg-clip-padding backdrop-filter text-white z-50 py-4  rounded-lg">
+                <div>
+                    <div>
+                        <div class="heading text-8xl">Photo to Video Converter</div>
+                    </div>
+                    <div class="col-span-full">
+                        <!-- <label for="cover-photo">Cover photo</label> -->
+                        <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                            <div id="drop-area" class="mt-2 flex justify-center rounded-lg border border-solid border-gray-900/25 px-6 py-10 bg-white shadow-md">
+                                <div class="text-center">
+                                    <svg class="mx-auto h-12 w-12 text-purple-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+                                    </svg>
+                                    <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                                        <span>Upload a file</span>
+                                        <input id="file-upload" name="file-upload" multiple type="file" class="sr-only">
+                                        <p class="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p class="text-xs leading-5 text-gray-600">PNG or a JPG</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="select-create">
+                    <div class="select"> 
+                        <h3>Select pictures</h3>
+                    </div>
+                    <div class="create">
+                        <form action="/app/create" method="post">
+                            <input type="text" name="images" id="images" hidden value="[]">
+                            <button type="submit" class="px-4 py-2 bg-pink-500 text-white rounded">Create Slideshow</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="photo-gallery mt-16" id="photo-gallery"> {{ images|safe }} </div>
+            </div>
+        </div>
+    </div>
+<script>
+    const dropArea = document.getElementById('drop-area');
+    const photoGallery = document.getElementById('photo-gallery');
+    const selectedPhotos = [];
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        dropArea.classList.add('border-indigo-600');
+    }
+
+    function unhighlight() {
+        dropArea.classList.remove('border-indigo-600');
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        // add files to file input
+        const fileInput = document.getElementById('file-upload');
+        fileInput.files = files;
+        // send post request to server
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var formData = new FormData();
+            formData.append('file', file);
+            fetch('/app/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(window.location.reload())
+        }
+    }
+    
+    const fileInput = document.getElementById('file-upload');
+    // fileInput.addEventListener('change', function () {
+    //     handleFiles(this.files);
+    // });
+
+    // function handleFiles(files) {
+    //     for (let i = 0; i < files.length; i++) {
+    //         const file = files[i];
+    //         if (file.type.startsWith('image/')) {
+    //             const reader = new FileReader();
+    //             reader.readAsDataURL(file);
+    //             reader.onload = function () {
+    //                 const imgContainer = document.createElement('div');
+    //                 imgContainer.classList.add('img-container');
+
+    //                 const label = document.createElement('label');
+    //                 label.htmlFor = 'photo';
+    //                 const img = document.createElement('img');
+    //                 img.src = reader.result;
+    //                 label.appendChild(img);
+    //                 imgContainer.appendChild(label);
+    
+    //                     const checkbox = document.createElement('input');
+    //                     checkbox.type = 'checkbox';
+    //                     checkbox.name = 'photo';
+    //                     checkbox.className = 'checkbox';
+    //                     checkbox.value = file.name; // Set the value to the filename or any unique ID
+    //                     label.appendChild(checkbox);
+    
+    //                 photoGallery.appendChild(imgContainer);
+    //             };
+    //         }
+    //     }
+    // }
+    
+    const createButton = document.querySelector('.create button');
+    createButton.addEventListener('click', (event) => {
+        // dont submit form
+        event.preventDefault();
+        var checkboxes = document.querySelectorAll('.checkbox:checked');
+        selectedPhotos.length = 0; // Clear the array before updating it
+        checkboxes.forEach(checkbox => {
+            selectedPhotos.push(checkbox.id); // Add the selected photo IDs to the array
+        });
+        // send post request to /app/create with the selected photos and redirect to the new page
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/app/create';
+        form.style.display = 'none';
+
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'images';
+        input.value = JSON.stringify(selectedPhotos);
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+        form.submit();
+    });
+
+    function updateHiddenInput() {
+        const hiddenInput = document.querySelector('input[type="hidden"]');
+        hiddenInput.value = JSON.stringify(selectedPhotos); // Convert the array to JSON and set it as the hidden input value
+    }
+
+    // var fileInput2 = document.getElementById('');
+
+    fileInput.addEventListener('change', (event) => {
+        console.log(event);
+        var files = event.target.files;
+        console.log(files);
+        
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var formData = new FormData();
+            formData.append('file', file);
+            fetch('/app/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(window.location.reload())
+        }
+    });
+
+    
+</script>
+
+</body>
+</html>
